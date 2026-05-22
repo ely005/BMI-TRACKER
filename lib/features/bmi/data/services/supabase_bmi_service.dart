@@ -10,7 +10,22 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class SupabaseBmiService implements BmiDataSource {
   SupabaseBmiService();
 
+  static const double _maxHeightCm = 999.99;
+  static const double _maxWeightKg = 999.99;
+
   final SupabaseClient _client = Supabase.instance.client;
+
+  void _validateRequest(CreateBmiRequest request) {
+    if (request.heightCm <= 0 || request.heightCm > _maxHeightCm) {
+      throw Exception('Height must be between 0 and $_maxHeightCm cm.');
+    }
+    if (request.weightKg <= 0 || request.weightKg > _maxWeightKg) {
+      throw Exception('Weight must be between 0 and $_maxWeightKg kg.');
+    }
+    if (request.bmiValue <= 0 || request.bmiValue > 99.99) {
+      throw Exception('BMI must be 99.99 or less for record storage.');
+    }
+  }
 
   @override
   Future<List<BmiRecordEntity>> getRecords() async {
@@ -53,6 +68,8 @@ class SupabaseBmiService implements BmiDataSource {
 
   @override
   Future<BmiRecordEntity> createRecord(CreateBmiRequest request) async {
+    _validateRequest(request);
+
     final String? userId = _client.auth.currentUser?.id;
     if (userId == null) {
       throw Exception('User not authenticated');
@@ -77,6 +94,16 @@ class SupabaseBmiService implements BmiDataSource {
 
   @override
   Future<BmiRecordEntity> updateRecord(UpdateBmiRequest request) async {
+    if (request.heightCm <= 0 || request.heightCm > _maxHeightCm) {
+      throw Exception('Height must be between 0 and $_maxHeightCm cm.');
+    }
+    if (request.weightKg <= 0 || request.weightKg > _maxWeightKg) {
+      throw Exception('Weight must be between 0 and $_maxWeightKg kg.');
+    }
+    if (request.bmiValue <= 0 || request.bmiValue > 99.99) {
+      throw Exception('BMI must be 99.99 or less for record storage.');
+    }
+
     final String? userId = _client.auth.currentUser?.id;
     if (userId == null) {
       throw Exception('User not authenticated');

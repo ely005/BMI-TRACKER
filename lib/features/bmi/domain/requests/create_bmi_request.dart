@@ -41,6 +41,11 @@ class CreateBmiRequest {
       return weightError;
     }
 
+    final String? bmiError = BMIValidator.validateBmi(bmiValue);
+    if (bmiError != null) {
+      return bmiError;
+    }
+
     return null;
   }
 }

@@ -7,6 +7,10 @@ class AppException implements Exception {
   String toString() => message;
 }
 
+class AuthException extends AppException {
+  const AuthException([super.message = 'Authentication error']);
+}
+
 class ServerException extends AppException {
   const ServerException([super.message = 'Server error']);
 }
